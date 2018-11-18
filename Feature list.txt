@@ -1,0 +1,19 @@
+-check unique username on the go.
+-Remember me option/ Keep me logged in.
+-Set your status/ have a list of all status.
+-encrypted password.
+-List of users signed in, the ones online.
+-Show a list with online first, last chat with them and time. 
+-Ability to upload picture of themselves.
+-chat with picture and whether they are online. 
+-Ability to have favourite users.
+-notif when new message.
+-Search a user and send message.
+
+
+
+Future features:
+- Group chat.
+- File/Image/Link sharing.
+- Block user ?
+
