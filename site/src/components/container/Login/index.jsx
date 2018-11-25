@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import './login.scss';
+import getApiConfig from '../../../apiConfig.js';
 var classNames = require('classnames');
 
 class Login extends Component {
@@ -9,6 +10,7 @@ class Login extends Component {
     super(props);
 
     this.state = {
+      users: [],
       signupModal: false,
       username: '',
       password: '',
@@ -16,11 +18,25 @@ class Login extends Component {
       isSignupEnabled: false,
       signupError: ''
     };
-
+    this.config = getApiConfig();
     this.toggleSignupModal = this.toggleSignupModal.bind(this);
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
-    this.handlePassWordChange = this.handlePassWordChange.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleConfPasswordChange = this.handleConfPasswordChange.bind(this);
+    this.checkSignup = this.checkSignup.bind(this);
+  }
+
+  componentDidMount(){
+    fetch(this.config.dev.users)
+    .then(res => res.json())
+    .then((result) => {
+      var usernames = result.users.map((item) => item.username);
+      this.setState({usernames});
+    },
+    (error) => {
+      this.setState({signupError: 'Failed to fetch user list.'});
+    }
+    )
   }
 
   toggleSignupModal(){
@@ -28,6 +44,21 @@ class Login extends Component {
       signupModal: !this.state.signupModal
     });
   }
+
+  checkSignup(username, password, confPassword){
+
+    if(username.length > 0 && 
+      password.length > 0 && 
+      confPassword.length > 0 &&
+      !this.state.usernames.includes(username) && 
+      password === confPassword){
+          this.setState({isSignupEnabled: true});
+    }
+    else{
+      this.setState({isSignupEnabled: false});
+    }
+  }
+
 //validate all rules for the particular field and at the and check whether signup should be enabled
   handleUsernameChange(e){
     this.setState({
@@ -37,30 +68,31 @@ class Login extends Component {
 
     const username = e.target.value;
 
-    if(!username.match(/^[a-z0-9_-]{3,15}$/)){
+    if(username.length < 2 || !username.match(/^[a-z0-9_-]{3,15}$/)){
       this.setState({
         isSignupEnabled: false,
         signupError: 'Username format not correct'
       });
       return;
     }
-
-
+    this.checkSignup(username, this.state.password, this.state.confPassword);
   }
 
-  handlePassWordChange(e){
+  handlePasswordChange(e){
     this.setState({
       password: e.target.value,
       signupError: ''
     });
     const pass = e.target.value;
-    if(pass !== this.state.confPassword){
+    if(pass.length < 6){
+      console.log('pass is short');
       this.setState({
         isSignupEnabled: false,
-        signupError: 'Password and Confirm password does not match.'
+        signupError: 'Password should be greater than 6 characters.'
       });
       return;
     }
+    this.checkSignup(this.state.username, pass, this.state.confPassword);
   }
 
   handleConfPasswordChange(e){
@@ -69,13 +101,10 @@ class Login extends Component {
       signupError: ''
     });
     const confpass = e.target.value;
-    if(confpass !== this.state.password){
-      this.setState({
-        isSignupEnabled: false,
-        signupError: 'Password and Confirm password does not match.'
-      });
+    if(confpass.length < 1){
       return;
     }
+    this.checkSignup(this.state.username, this.state.password, confpass);
   }
 
   render() {
@@ -96,7 +125,7 @@ class Login extends Component {
                     <input type='password' id='inputPassword' className='form-control' placeholder='Password' required/>
                       <label htmlFor='inputPassword'>Password</label>
                   </div>
-
+                
                   <div className='custom-control custom-checkbox mb-3'>
                     <input type='checkbox' className='custom-control-input' id='customCheck1'/>
                       <label className='custom-control-label' htmlFor='customCheck1'>Remember password</label>
@@ -118,7 +147,7 @@ class Login extends Component {
                         </div>
 
                         <div className='form-label-group'>
-                          <input type='password' id='inputPassword' value = {this.state.password} onChange = {this.handlePassWordChange} className='form-control' placeholder='Password' required/>
+                          <input type='password' id='inputPassword' value = {this.state.password} onChange = {this.handlePasswordChange} className='form-control' placeholder='Password' required/>
                             <label htmlFor='inputPassword'>Password</label>
                         </div>
 
@@ -126,7 +155,7 @@ class Login extends Component {
                           <input type='password' id='inputConfirmPassword' value = {this.state.confPassword} onChange = {this.handleConfPasswordChange} className='form-control' placeholder='Confirm Password' required/>
                             <label htmlFor='inputConfirmPassword'>Confirm Password</label>
                         </div>
-                        <button className={classNames('btn btn-lg btn-primary btn-block text-uppercase', {disabled: !this.state.isSignupEnabled} )} 
+                        <button disabled = {!this.state.isSignupEnabled} className={classNames('btn btn-lg btn-primary btn-block text-uppercase')} 
                                 type='submit'
                         >
                           Sign Up
