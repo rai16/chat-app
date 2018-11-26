@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import './login.scss';
 import getApiConfig from '../../../apiConfig.js';
+
 var classNames = require('classnames');
 
 class Login extends Component {
@@ -16,7 +17,11 @@ class Login extends Component {
       password: '',
       confPassword: '',
       isSignupEnabled: false,
-      signupError: ''
+      signupError: '',
+      registerMessage: '',
+      registerError: '',
+      loginMessage: '',
+      loginError: ''
     };
     this.config = getApiConfig();
     this.toggleSignupModal = this.toggleSignupModal.bind(this);
@@ -24,19 +29,24 @@ class Login extends Component {
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleConfPasswordChange = this.handleConfPasswordChange.bind(this);
     this.checkSignup = this.checkSignup.bind(this);
+    this.onSignup = this.onSignup.bind(this);
+    this.getUsernameList = this.getUsernameList.bind(this);
   }
 
-  componentDidMount(){
+  getUsernameList(){
+    var usernames = this.state.users;
     fetch(this.config.dev.users)
     .then(res => res.json())
     .then((result) => {
       var usernames = result.users.map((item) => item.username);
-      this.setState({usernames});
+      this.setState({users: usernames});
+      return usernames;
     },
     (error) => {
-      this.setState({signupError: 'Failed to fetch user list.'});
+      return usernames;
     }
     )
+    return usernames;
   }
 
   toggleSignupModal(){
@@ -45,12 +55,37 @@ class Login extends Component {
     });
   }
 
-  checkSignup(username, password, confPassword){
+  onSignup(e){
+    e.preventDefault();
+    fetch(this.config.dev.users + 'register', 
+    {
+      method: 'POST',
+      body: JSON.stringify({username: this.state.username, password: this.state.password}),
+      headers: {"Content-Type": "application/json"}
+    })
+    .then(res => res.json())
+    .then(result => {
+      this.setState({
+        registerMessage: 'Successfully signed up. You can login now.',
+        username: '',
+        password: '',
+        confPassword: '',
+        signupError: ''
+    });
+      this.toggleSignupModal();
+
+    }, (error) => {
+      this.setState({registerError: 'Could not register user. Please try again.'});
+    }
+    )
+  }
+
+  checkSignup(username, usernames, password, confPassword){
 
     if(username.length > 0 && 
       password.length > 0 && 
       confPassword.length > 0 &&
-      !this.state.usernames.includes(username) && 
+      !usernames.includes(username) && 
       password === confPassword){
           this.setState({isSignupEnabled: true});
     }
@@ -75,7 +110,8 @@ class Login extends Component {
       });
       return;
     }
-    this.checkSignup(username, this.state.password, this.state.confPassword);
+    const usernames = this.getUsernameList();
+    this.checkSignup(username, usernames, this.state.password, this.state.confPassword);
   }
 
   handlePasswordChange(e){
@@ -85,14 +121,13 @@ class Login extends Component {
     });
     const pass = e.target.value;
     if(pass.length < 6){
-      console.log('pass is short');
       this.setState({
         isSignupEnabled: false,
         signupError: 'Password should be greater than 6 characters.'
       });
       return;
     }
-    this.checkSignup(this.state.username, pass, this.state.confPassword);
+    this.checkSignup(this.state.username, this.state.users, pass, this.state.confPassword);
   }
 
   handleConfPasswordChange(e){
@@ -104,7 +139,7 @@ class Login extends Component {
     if(confpass.length < 1){
       return;
     }
-    this.checkSignup(this.state.username, this.state.password, confpass);
+    this.checkSignup(this.state.username, this.state.users, this.state.password, confpass);
   }
 
   render() {
@@ -137,7 +172,7 @@ class Login extends Component {
                   <Modal isOpen={this.state.signupModal} toggle={this.toggleSignupModal}>
                     <ModalHeader toggle={this.toggle}>Sign Up</ModalHeader>
                     <ModalBody>
-                      <form className='form-signup'>
+                      <form className='form-signup' onSubmit = {this.onSignup}>
                         <div className='form-label-group'>
                           <input type='text' id='inputUsername' value = {this.state.username} onChange = {this.handleUsernameChange} className='form-control' placeholder='Username' required autoFocus/>
                           <label htmlFor='inputUsername'>Username</label>

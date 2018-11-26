@@ -1,5 +1,6 @@
 const initialState = {
-    title: 'Login'
+    signupError: '',
+    isRegistered: false
 };
 
 export default function loginReducer(state = initialState, action){
