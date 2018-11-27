@@ -13,6 +13,8 @@ class Login extends Component {
     this.state = {
       users: [],
       signupModal: false,
+      loginUsername: '',
+      loginPassword: '',
       username: '',
       password: '',
       confPassword: '',
@@ -20,7 +22,6 @@ class Login extends Component {
       signupError: '',
       registerMessage: '',
       registerError: '',
-      loginMessage: '',
       loginError: ''
     };
     this.config = getApiConfig();
@@ -30,6 +31,7 @@ class Login extends Component {
     this.handleConfPasswordChange = this.handleConfPasswordChange.bind(this);
     this.checkSignup = this.checkSignup.bind(this);
     this.onSignup = this.onSignup.bind(this);
+    this.onSignIn = this.onSignIn.bind(this);
     this.getUsernameList = this.getUsernameList.bind(this);
   }
 
@@ -52,6 +54,29 @@ class Login extends Component {
   toggleSignupModal(){
     this.setState({
       signupModal: !this.state.signupModal
+    });
+  }
+
+  onSignIn(e){
+    e.preventDefault();
+    fetch(this.config.dev.users + 'login',
+    {
+      method: 'POST',
+      body: JSON.stringify({username: this.state.loginUsername, password: this.state.loginPassword}),
+      headers: {"Content-Type": "application/json"}
+    })
+    .then(res => res.json())
+    .then(result => {
+        if(result.errors){
+          this.setState({loginError: result.errors});
+          return;
+        }
+        //fire action to set some global state that the user has logged in and use it to verify
+        if(result.loggedIn)
+          window.location.href = '/home';
+
+    }, (error) => {
+        this.setState({loginError: 'Could not login. Please try again.'});
     });
   }
 
@@ -150,21 +175,24 @@ class Login extends Component {
             <div className='card card-signin my-5'>
               <div className='card-body'>
                 <h5 className='card-title text-center'><b>Sign In</b></h5>
-                <form className='form-signin'>
+                { this.state.loginError && <div className='alert alert-danger'>
+                    {this.state.loginError}
+                </div>}
+                <form className='form-signin' onSubmit = {this.onSignIn}>
                   <div className='form-label-group'>
-                    <input type='text' id='username' className='form-control' placeholder='Username' required autoFocus/>
+                    <input type='text' id='username' onFocus = {() => this.setState({loginError: ''})} onChange = {(e) => this.setState({loginUsername: e.target.value})} value = {this.state.loginUsername} className='form-control' placeholder='Username' required autoFocus/>
                       <label htmlFor='username'>Username</label>
                   </div>
 
                   <div className='form-label-group'>
-                    <input type='password' id='inputPassword' className='form-control' placeholder='Password' required/>
+                    <input type='password' id='inputPassword' onFocus = {() => this.setState({loginError: ''})} onChange = {(e) => this.setState({loginPassword: e.target.value})} value = {this.state.loginPassword} className='form-control' placeholder='Password' required/>
                       <label htmlFor='inputPassword'>Password</label>
                   </div>
                 
-                  <div className='custom-control custom-checkbox mb-3'>
+                  {/* <div className='custom-control custom-checkbox mb-3'>
                     <input type='checkbox' className='custom-control-input' id='customCheck1'/>
                       <label className='custom-control-label' htmlFor='customCheck1'>Remember password</label>
-                  </div>
+                  </div> */}
                   <button className='btn btn-lg btn-primary btn-block text-uppercase' type='submit'>Sign in</button>
                   <hr/>
                 </form>

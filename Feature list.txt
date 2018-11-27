@@ -1,9 +1,10 @@
+Basic features:
 -check unique username on the go.
 -Remember me option/ Keep me logged in.
 -Set your status/ have a list of all status.
--encrypted password.
+-encrypted password. (done)
 -List of users signed in, the ones online.
--Show a list with online first, last chat with them and time. 
+-Show a list sorted based on the last message sent, last message to them with them and time. 
 -Ability to upload picture of themselves.
 -chat with picture and whether they are online. 
 -Ability to have favourite users.
@@ -12,8 +13,16 @@
 
 
 
-Future features:
+Advance features:
 - Group chat.
 - File/Image/Link sharing.
 - Block user ?
+- custom message scheduling for users for birthdays(eg)
+- Message encryption
+- Location sharing
+- Status and stories ? try storing the history of status/story updates.
+- Personalized theme.
+- Notification sound (with ability to turn off?)
+- Send chat conversation to email, based on authentication ?
+
 
