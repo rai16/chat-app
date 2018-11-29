@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import './login.scss';
 import getApiConfig from '../../../apiConfig.js';
+import { auth } from '../../../auth';
+import { withRouter } from 'react-router';
 
 var classNames = require('classnames');
 
@@ -72,8 +74,10 @@ class Login extends Component {
           return;
         }
         //fire action to set some global state that the user has logged in and use it to verify
-        if(result.loggedIn)
-          window.location.href = '/home';
+        if(result.loggedIn){
+          auth.authenticate();
+          this.props.history.push('/home');
+        }
 
     }, (error) => {
         this.setState({loginError: 'Could not login. Please try again.'});
@@ -241,4 +245,4 @@ const mapStateToProps = (state) => {
       title: state.login.title
     };
 }
-export default connect(mapStateToProps)(Login);
+export default withRouter(connect(mapStateToProps)(Login));

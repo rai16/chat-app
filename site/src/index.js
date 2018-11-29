@@ -6,36 +6,43 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import Login from './components/container/Login/index.jsx';
 import Home from './components/container/Home/index.jsx';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
 import rootReducer from './reducers/rootReducer';
+import {auth} from './auth';
 
 const store = createStore(rootReducer);
 
-// const routes = [
-//     {path: '/', component: Login},
-//     {path: '/home', component: Home}
-//   ];
+function PrivateRoute({ component: Component, ...rest }) {
+    console.log('auth: '+ auth.isAuthenticated);
+    return (
+      <Route
+        {...rest}
+        render={props =>
+          auth.isAuthenticated ? (
+            <Component {...props} />
+          ) : (
+            <Redirect
+              to={{
+                pathname: "/",
+                state: { from: props.location }
+              }}
+            />
+          )
+        }
+      />
+    );
+  }
+  
 
 class Main extends Component{
-    constructor(props){
-        super(props);
-        this.state = {
-            isAuthenticated : false
-        };
-    }
-    authenticate(){
-        this.setState({
-            isAuthenticated: true
-        });
-    }
     render(){ 
             return(
             <Provider store = {store}>
                 <Router>
                     <div>
-                        <Route exact path = '/' component = {Login}/>
-                        <Route exact path = '/home' component = {Home}/>
+                        <Route exact path = '/' render = {() => <Login onLoginSuccess = {this.toggleAuthenticate}/>}/>
+                         <PrivateRoute path="/home" component={Home} />
                     </div>
                 </Router>
             </Provider>
