@@ -1,5 +1,5 @@
 Basic features:
--check unique username on the go.
+-check unique username on the go. (done)
 -Remember me option/ Keep me logged in.
 -Set your status/ have a list of all status.
 -encrypted password. (done)

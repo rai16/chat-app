@@ -14,7 +14,7 @@ import {auth} from './auth';
 const store = createStore(rootReducer);
 
 function PrivateRoute({ component: Component, ...rest }) {
-    console.log('auth: '+ auth.isAuthenticated);
+    
     return (
       <Route
         {...rest}
