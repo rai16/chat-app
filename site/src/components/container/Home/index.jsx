@@ -6,6 +6,7 @@ import UserListWindow from '../../UserListWindow';
 import ChatWindow from '../../ChatWindow';
 import {auth} from '../../../auth';
 import getApiConfig from '../../../apiConfig.js';
+import * as homeActions from '../../../actions/homeActions';
 
 class Home extends Component {
   
@@ -15,24 +16,39 @@ class Home extends Component {
   }
 
   componentDidMount(){
+    this.props.requestUserList();
+    fetch (this.config.dev.users)
+    .then(res => res.json())
+    .then((result) => {
+     // console.log('inside home coponent did mount ---' + result.users);
+      this.props.setUserList(result.users);
+    },
+    (error) => {
+        alert('Problem fetching user list. Please refresh.');
+        this.props.errorUserList('Error fetching user list.');
+    });
+
+    this.props.requestAllMessages();
     fetch(this.config.dev.messages + '/'+auth.userid)
     .then(res => res.json())
     .then((result) => {
-      console.log('result: ' + result);
+     this.props.setAllMessages(result.allMessages);
     },
     (error) => {
-      
+      alert('Problem fetching user messages. Please refresh.');
+      this.props.errorAllMessages('Problem fetching user messages. Please refresh.');
     }
     )
   }
 
   render() {
+    console.log('inside home: ' + this.props.users);
     return (
       <div className='container-fluid'>
         <Header/>
         <div className='messaging row'>
           <div className='inbox_msg'>
-                  <UserListWindow/>
+                  {this.props.users && this.props.users.length > 0 && <UserListWindow users = {this.props.users}/>}
                   <ChatWindow/>
           </div>
       </div>
@@ -42,9 +58,30 @@ class Home extends Component {
 }
 
 const mapStateToProps = (state) => {
+    console.log('inside home map state to props: ');
+    console.log(state);
     return {
-      title: state.login.title
+      title: state.login.title,
+      requestUsers: state.home.requestUsers,
+      users: state.home.users,
+      usersError: state.home.errorUsers,
+
+      requestAllMessages: state.home.requestAllMessages,
+      allMessages: state.home.allMessages,
+      allMessagesError: state.home.allMessagesError
     }
 };
 
-export default connect(mapStateToProps)(Home);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    requestUserList: () => dispatch(homeActions.requestUserList()),
+    setUserList: (users) => dispatch(homeActions.setUserList(users)),
+    errorUserList: (error) => dispatch(homeActions.errorUserList(error)),
+    requestAllMessages: () => dispatch(homeActions.requestAllMessages()),
+    setAllMessages: (allMessages) => dispatch(homeActions.setAllMessages(allMessages)),
+    errorAllMessages: (error) => dispatch(homeActions.errorAllMessages(error))
+  }
+
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
