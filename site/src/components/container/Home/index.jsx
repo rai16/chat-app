@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import '../../home.scss';
+import '../../home.scss'; 
 import Header from '../../Header';
 import UserListWindow from '../../UserListWindow';
 import ChatWindow from '../../ChatWindow';
@@ -13,6 +13,11 @@ class Home extends Component {
   constructor(props){
     super(props);
     this.config = getApiConfig();
+    this.state = {
+      selectedUser: null,
+      messageThread: null
+    }
+    this.changeSelectedUser = this.changeSelectedUser.bind(this);
   }
 
   componentDidMount(){
@@ -20,7 +25,6 @@ class Home extends Component {
     fetch (this.config.dev.users)
     .then(res => res.json())
     .then((result) => {
-     // console.log('inside home coponent did mount ---' + result.users);
       this.props.setUserList(result.users);
     },
     (error) => {
@@ -41,6 +45,11 @@ class Home extends Component {
     )
   }
 
+  changeSelectedUser(user){
+    this.setState({selectedUser: user});
+  }
+
+
   render() {
     console.log('inside home: ' + this.props.users);
     return (
@@ -48,8 +57,13 @@ class Home extends Component {
         <Header/>
         <div className='messaging row'>
           <div className='inbox_msg'>
-                  {this.props.users && this.props.users.length > 0 && <UserListWindow users = {this.props.users}/>}
-                  <ChatWindow/>
+                  {this.props.users && this.props.users.length > 0 && <UserListWindow users = {this.props.users} onSelectedUserChange = {this.changeSelectedUser}/>}
+                  {this.state.selectedUser && <ChatWindow user = {this.state.selectedUser}/>}
+                  {!this.state.selectedUser && <div className='mesgs'>
+                    <h3 align="center">
+                      <small className="text-muted">Please select a user to view chats.</small>
+                    </h3>
+                  </div>}
           </div>
       </div>
     </div>

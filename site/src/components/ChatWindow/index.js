@@ -5,8 +5,11 @@ import IncomingMessage from '../IncomingMessage';
 import OutgoingMessage from '../OutgoingMessage';
 
 class ChatWindow extends Component{
+    
     render(){
+        
         return(
+        
             <div className='mesgs'>
                 <div className='msg_history'>
                     <IncomingMessage/>
@@ -21,8 +24,9 @@ class ChatWindow extends Component{
                     <OutgoingMessage/>
                     <IncomingMessage/>
                 </div>
-                <ChatTypeBar/>
+                <ChatTypeBar user = {this.props.user}/>
             </div>
+            
         );
     }
 }
