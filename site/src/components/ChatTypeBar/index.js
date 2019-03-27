@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import '../home.scss';
+import { auth } from '../../auth';
+import getApiConfig from '../../apiConfig';
 
 class ChatTypeBar extends Component{
     constructor(props){
@@ -7,6 +9,7 @@ class ChatTypeBar extends Component{
         this.state = {
             message: ''
         }
+        this.config = getApiConfig();
         this.sendMessage = this.sendMessage.bind(this);
     }
     componentWillReceiveProps(nextProps){
@@ -15,9 +18,19 @@ class ChatTypeBar extends Component{
     }
     sendMessage(e){
         e.preventDefault();
-        var mssg = this.state.message;
+        var mssg = this.state.message.trim();
         this.setState({message: ''});
-        //send message
+        fetch(this.config.dev.messages + 'send', 
+        {
+            method: 'POST',
+            body: JSON.stringify({user_from: auth.userid, user_to: this.props.user._id, content: mssg}),
+            headers: {"Content-Type": "application/json"}
+        })
+        .then(res => res.json())
+        .then(result => {
+            if(result.mssgSent)
+                console.log('message sent!!!');
+        })
     }
     render(){
         return (

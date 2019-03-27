@@ -5,7 +5,20 @@ import IncomingMessage from '../IncomingMessage';
 import OutgoingMessage from '../OutgoingMessage';
 
 class ChatWindow extends Component{
-    
+    constructor(props){
+        super(props);
+        this.messagesEnd = React.createRef();
+        this.scrollToBottom = this.scrollToBottom.bind(this);
+    }
+    componentDidMount () {
+        this.scrollToBottom();
+      }
+      componentDidUpdate () {
+        this.scrollToBottom();
+      }
+      scrollToBottom = () => {
+        this.messagesEnd.current.scrollIntoView();
+      }
     render(){
         
         return(
@@ -23,7 +36,8 @@ class ChatWindow extends Component{
                     <OutgoingMessage/>
                     <OutgoingMessage/>
                     <IncomingMessage/>
-                </div>
+                    <div ref={this.messagesEnd} />
+                </div> 
                 <ChatTypeBar user = {this.props.user}/>
             </div>
             

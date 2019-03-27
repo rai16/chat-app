@@ -22,27 +22,19 @@ class Home extends Component {
 
   componentDidMount(){
     this.props.requestUserList();
-    fetch (this.config.dev.users)
-    .then(res => res.json())
-    .then((result) => {
-      this.props.setUserList(result.users);
-    },
-    (error) => {
-        alert('Problem fetching user list. Please refresh.');
-        this.props.errorUserList('Error fetching user list.');
-    });
-
     this.props.requestAllMessages();
-    fetch(this.config.dev.messages + '/'+auth.userid)
-    .then(res => res.json())
-    .then((result) => {
-     this.props.setAllMessages(result.allMessages);
+    var userListApi = fetch(this.config.dev.users).then(res => res.json());
+    var mssgListApi = fetch(this.config.dev.messages + '/'+auth.userid).then(res => res.json());
+    Promise.all([userListApi, mssgListApi])
+    .then((values) => {
+      //remove yourself from the list of people you can chat with
+      var users = values[0].users.filter((obj) => obj._id !== auth.userid);
+      this.props.setUserList(users);
+      this.props.setAllMessages(values[1].allMessages);
     },
     (error) => {
-      alert('Problem fetching user messages. Please refresh.');
-      this.props.errorAllMessages('Problem fetching user messages. Please refresh.');
-    }
-    )
+      alert('error in fetching users/messages');
+    });
   }
 
   changeSelectedUser(user){
@@ -51,14 +43,18 @@ class Home extends Component {
 
 
   render() {
-    console.log('inside home: ' + this.props.users);
     return (
       <div className='container-fluid'>
         <Header/>
         <div className='messaging row'>
           <div className='inbox_msg'>
-                  {this.props.users && this.props.users.length > 0 && <UserListWindow users = {this.props.users} onSelectedUserChange = {this.changeSelectedUser}/>}
-                  {this.state.selectedUser && <ChatWindow user = {this.state.selectedUser}/>}
+                  {this.props.users && 
+                  this.props.users.length > 0 && 
+                  <UserListWindow users = {this.props.users} onSelectedUserChange = {this.changeSelectedUser}/>
+                  }
+                  {this.state.selectedUser && 
+                  <ChatWindow user = {this.state.selectedUser}/>
+                  }
                   {!this.state.selectedUser && <div className='mesgs'>
                     <h3 align="center">
                       <small className="text-muted">Please select a user to view chats.</small>
@@ -72,17 +68,14 @@ class Home extends Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log('inside home map state to props: ');
-    console.log(state);
     return {
       title: state.login.title,
       requestUsers: state.home.requestUsers,
       users: state.home.users,
-      usersError: state.home.errorUsers,
 
       requestAllMessages: state.home.requestAllMessages,
       allMessages: state.home.allMessages,
-      allMessagesError: state.home.allMessagesError
+      fetchError: state.home.fetchError
     }
 };
 
