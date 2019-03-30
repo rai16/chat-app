@@ -22,10 +22,12 @@ class Home extends Component {
     this.initMessageThread = this.initMessageThread.bind(this);
     this.defineUserLastMessage = this.defineUserLastMessage.bind(this);
   }
+
   componentWillReceiveProps(nextProps){
     if(nextProps.users)
       this.setState({users: nextProps.users});
   }
+
   componentDidMount(){
     this.props.requestUserList();
     this.props.requestAllMessages();
@@ -90,7 +92,7 @@ class Home extends Component {
                   <UserListWindow users = {this.state.users} onSelectedUserChange = {this.changeSelectedUser}/>
                   }
                   {this.state.selectedUser && 
-                  <ChatWindow user = {this.state.selectedUser} mssgThread = {this.state.messageThread}/>
+                  <ChatWindow user = {this.state.selectedUser} messageThread = {this.state.messageThread}/>
                   }
                   {!this.state.selectedUser && <div className='mesgs'>
                     <h3 align="center">

@@ -59,6 +59,8 @@ img{
   float: left;
   padding: 0 0 0 15px;
   width: 88%;
+  height: 50px;
+  overflow:hidden;
 }
 
 .chat_people{ overflow:hidden; clear:both;}
@@ -124,7 +126,10 @@ img{
   min-height: 48px;
   width: 100%;
 }
-
+.write_msg{
+  width: 100%;
+  resize: none;
+}
 .type_msg {border-top: 1px solid #c4c4c4;position: relative;}
 .msg_send_btn {
   background: #05728f none repeat scroll 0 0;

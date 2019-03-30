@@ -4,8 +4,6 @@ var classNames = require('classnames');
 
 class UserDetails extends Component {
     render(){
-        console.log('user received:');
-        console.log(this.props.user);
         return (
             <div className={classNames('chat_list', {active_chat: this.props.isActive})}>
                 <div className='chat_people'>

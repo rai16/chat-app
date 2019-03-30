@@ -37,7 +37,8 @@ class ChatTypeBar extends Component{
             <div className='type_msg'>
                 <div className='input_msg_write'>
                     <form onSubmit = {this.sendMessage}>
-                        <input 
+                        <textarea 
+                            autoFocus
                             type='text' 
                             className='write_msg' 
                             placeholder='Type a message' 
