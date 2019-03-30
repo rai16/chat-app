@@ -15,32 +15,68 @@ class Home extends Component {
     this.config = getApiConfig();
     this.state = {
       selectedUser: null,
-      messageThread: null
+      messageThread: null,
+      users: null
     }
     this.changeSelectedUser = this.changeSelectedUser.bind(this);
+    this.initMessageThread = this.initMessageThread.bind(this);
+    this.defineUserLastMessage = this.defineUserLastMessage.bind(this);
   }
-
+  componentWillReceiveProps(nextProps){
+    if(nextProps.users)
+      this.setState({users: nextProps.users});
+  }
   componentDidMount(){
     this.props.requestUserList();
     this.props.requestAllMessages();
     var userListApi = fetch(this.config.dev.users).then(res => res.json());
-    var mssgListApi = fetch(this.config.dev.messages + '/'+auth.userid).then(res => res.json());
+    var mssgListApi = fetch(this.config.dev.messages + '/' + auth.userid).then(res => res.json());
     Promise.all([userListApi, mssgListApi])
     .then((values) => {
       //remove yourself from the list of people you can chat with
       var users = values[0].users.filter((obj) => obj._id !== auth.userid);
       this.props.setUserList(users);
       this.props.setAllMessages(values[1].allMessages);
+      this.initMessageThread(users, values[1].allMessages);
+      this.defineUserLastMessage();
     },
     (error) => {
       alert('error in fetching users/messages');
     });
   }
 
+  defineUserLastMessage(){
+    var mssgThread = this.state.messageThread;
+    var users = this.state.users;
+    users.forEach((user) => {
+      var mssgArray = mssgThread.get(user._id);
+        user.lastMessage = (mssgArray && mssgArray.length > 0) ? mssgArray[mssgArray.length - 1] : '';
+    });
+    this.setState({users});
+    this.forceUpdate();
+  }
+
+  initMessageThread(users, messages){
+      var mssgThread = new Map();
+      var temp;
+      messages.forEach(message => {
+         var user_id = (message.user_from === auth.userid) ? message.user_to : message.user_from;
+         if(!mssgThread.has(user_id)){
+            temp = [message];
+            mssgThread.set(user_id, temp);
+         }
+         else{
+           temp = mssgThread.get(user_id);
+           temp.push(message);
+           mssgThread.set(user_id, temp); 
+         }
+      });
+      this.setState({messageThread: mssgThread});
+  }
+
   changeSelectedUser(user){
     this.setState({selectedUser: user});
   }
-
 
   render() {
     return (
@@ -49,11 +85,12 @@ class Home extends Component {
         <div className='messaging row'>
           <div className='inbox_msg'>
                   {this.props.users && 
+                  this.props.allMessages &&
                   this.props.users.length > 0 && 
-                  <UserListWindow users = {this.props.users} onSelectedUserChange = {this.changeSelectedUser}/>
+                  <UserListWindow users = {this.state.users} onSelectedUserChange = {this.changeSelectedUser}/>
                   }
                   {this.state.selectedUser && 
-                  <ChatWindow user = {this.state.selectedUser}/>
+                  <ChatWindow user = {this.state.selectedUser} mssgThread = {this.state.messageThread}/>
                   }
                   {!this.state.selectedUser && <div className='mesgs'>
                     <h3 align="center">
