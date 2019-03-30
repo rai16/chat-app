@@ -31,8 +31,20 @@ img{
   text-align: right;
   width: 60%; 
 }
-.headind_srch{ padding:10px 29px 10px 20px; overflow:hidden; border-bottom:1px solid #c4c4c4;}
 
+.user-search{
+  border: none;
+  width: 100%;
+}
+.search-icon{
+  height: 100%;
+  padding-top: 10px;
+  background-color: white;
+  padding-bottom: 9px;
+  padding-right: 2px;
+  color: #D3D3D3;
+  size: 2em;
+}
 .recent_heading h4 {
   color: #05728f;
   font-size: 21px;
