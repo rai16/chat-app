@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import '../home.scss';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 library.add(faSearch);
 class UserSearch extends Component {
@@ -15,7 +14,7 @@ class UserSearch extends Component {
                     className = 'form-control user-search'
                     onKeyUp = {(e) => this.props.onSearchTextChange(e)}
                   />
-                  <FontAwesomeIcon className = "search-icon fa-lg" icon="search"  />
+                  
                 </div>
             </div>
         );
