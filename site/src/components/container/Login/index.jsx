@@ -74,8 +74,8 @@ class Login extends Component {
           return;
         }
         //fire action to set some global state that the user has logged in and use it to verify
-        if(result.loggedIn){
-          auth.authenticate(this.state.loginUsername, result.userid);
+        if(result.user.loggedIn){
+          auth.authenticate(this.state.loginUsername, result.user.id, result.user.token);
           this.props.history.push('/home');
         }
 

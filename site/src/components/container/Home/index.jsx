@@ -30,8 +30,15 @@ class Home extends Component {
   componentDidMount(){
     this.props.requestUserList();
     this.props.requestAllMessages();
-    var userListApi = fetch(this.config.dev.users).then(res => res.json());
-    var mssgListApi = fetch(this.config.dev.messages + '/' + auth.userid).then(res => res.json());
+    var options = { 
+      method: 'get', 
+      headers: new Headers({
+        'Authorization': 'Token '+auth.token, 
+        'Content-Type': 'application/x-www-form-urlencoded'
+      })
+  }
+    var userListApi = fetch(this.config.dev.users, options).then(res => res.json());
+    var mssgListApi = fetch(this.config.dev.messages + '/' + auth.userid, options).then(res => res.json());
     Promise.all([userListApi, mssgListApi])
     .then((values) => {
       //remove yourself from the list of people you can chat with

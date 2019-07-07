@@ -32,7 +32,7 @@ function PrivateRoute({ component: Component, ...rest }) {
         }
       />
     );
-  }
+  } 
   
 
 class Main extends Component{
