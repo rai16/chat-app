@@ -5,6 +5,7 @@ import './login.scss';
 import getApiConfig from '../../../apiConfig.js';
 import { auth } from '../../../auth';
 import { withRouter } from 'react-router';
+import * as socketUtils from '../../../utils/socketUtils';
 
 var classNames = require('classnames');
 
@@ -76,6 +77,7 @@ class Login extends Component {
         //fire action to set some global state that the user has logged in and use it to verify
         if(result.user.loggedIn){
           auth.authenticate(this.state.loginUsername, result.user.id, result.user.token);
+          socketUtils.createSocketConn(result.user.token, result.user.id);
           this.props.history.push('/home');
         }
 

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import '../home.scss';
+import { parseDate } from '../../utils/dateUtils';
 
 class OutgoingMessage extends Component {
     render(){
@@ -7,7 +8,7 @@ class OutgoingMessage extends Component {
             <div className='outgoing_msg'>
                 <div className='sent_msg'>
                 <p>{this.props.message.content}</p>
-                <span className='time_date'> 11:01 AM    |    June 9</span> </div>
+                <span className='time_date'> {parseDate(this.props.message.time)} </span> </div>
             </div>
         );
     }

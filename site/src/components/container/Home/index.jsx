@@ -37,6 +37,7 @@ class Home extends Component {
         'Content-Type': 'application/x-www-form-urlencoded'
       })
   }
+
     var userListApi = fetch(this.config.dev.users, options).then(res => res.json());
     var mssgListApi = fetch(this.config.dev.messages + '/' + auth.userid, options).then(res => res.json());
     Promise.all([userListApi, mssgListApi])

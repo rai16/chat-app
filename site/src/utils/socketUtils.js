@@ -1,13 +1,19 @@
-import {getApiConfig} from '../apiConfig';
+import getApiConfig from '../apiConfig';
+var io = require('socket.io-client');
 var config = getApiConfig();
-var socket; 
-export function createSocketConn()
+
+export var socket; 
+
+export function createSocketConn(token, userid)
 {
-    socket = io(config.dev.base);
+    socket = io(config.dev.base, {
+        query: {
+            Token: token,
+            userid
+        }
+    });
 }
-//authenticate by using JWT
-export function authenticate()
-{
-    //will send JWT
-    socket.emit('authenticate', );
+
+export function getSocketConn(){
+    return socket;
 }

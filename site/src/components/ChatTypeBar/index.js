@@ -23,7 +23,7 @@ class ChatTypeBar extends Component{
         fetch(this.config.dev.messages + 'send', 
         {
             method: 'POST',
-            body: JSON.stringify({user_from: auth.userid, user_to: this.props.user._id, content: mssg}),
+            body: JSON.stringify({user_from: auth.userid, user_to: this.props.user._id, content: mssg, time: Date.now().toString()}),
             headers: {"Content-Type": "application/json"}
         })
         .then(res => res.json())
