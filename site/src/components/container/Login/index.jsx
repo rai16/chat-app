@@ -77,7 +77,7 @@ class Login extends Component {
         //fire action to set some global state that the user has logged in and use it to verify
         if(result.user.loggedIn){
           auth.authenticate(this.state.loginUsername, result.user.id, result.user.token);
-          socketUtils.createSocketConn(result.user.token, result.user.id);
+          socketUtils.initSocketConn(result.user.token, result.user.id, this.props.dispatch);
           this.props.history.push('/home');
         }
 

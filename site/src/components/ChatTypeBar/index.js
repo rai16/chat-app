@@ -12,10 +12,12 @@ class ChatTypeBar extends Component{
         this.config = getApiConfig();
         this.sendMessage = this.sendMessage.bind(this);
     }
+
     componentWillReceiveProps(nextProps){
         if(this.props.user.username !== nextProps.user.username)
             this.setState({message: ''});
     }
+
     sendMessage(e){
         e.preventDefault();
         var mssg = this.state.message.trim();
@@ -32,6 +34,7 @@ class ChatTypeBar extends Component{
                 console.log('message sent!!!');
         })
     }
+    
     render(){
         return (
             <div className='type_msg'>

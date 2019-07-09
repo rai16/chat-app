@@ -37,3 +37,45 @@ export function errorAllMessages(error){
         error
     }
 }
+export function onUserConnected(payload){
+    console.log(payload);
+    return{
+        type: 'USER_CONNECTED',
+        payload
+    }
+}
+
+export function onMessageReceived(payload){
+    return{
+        type: 'MESSAGE_RECEIVED',
+        payload
+    }
+}
+
+export function onMessageTyping(payload){
+    return{
+        type: 'MESSAGE_TYPING',
+        payload
+    }
+}
+
+export function onMessageSent(payload){
+    return{
+        type: 'MESSAGE_',
+        payload
+    }
+}
+
+export function onMessageUnread(payload){
+    return{
+        type: 'MESSAGE_UNREAD',
+        payload
+    }
+}
+
+export function onMessageRead(payload){
+    return{
+        type: 'MESSAGE_READ',
+        payload
+    }
+}
