@@ -3,10 +3,10 @@ Basic features:
 -Remember me option/ Keep me logged in.
 -Set your status/ have a list of all status.
 -encrypted password. (done)
--List of users signed in, the ones online.
--Show a list sorted based on the last message sent, last message to them with them and time. 
+-List of users signed in, the ones online, live.
+-Show a list sorted based on the last message sent, last message to them with them and time.
 -Ability to upload picture of themselves.
--chat with picture and whether they are online. 
+-chat with picture and whether they are online.
 -Ability to have favourite users.
 -notif when new message.
 -Search a user and send message.
@@ -24,5 +24,3 @@ Advance features:
 - Personalized theme.
 - Notification sound (with ability to turn off?)
 - Send chat conversation to email, based on authentication ?
-
-
