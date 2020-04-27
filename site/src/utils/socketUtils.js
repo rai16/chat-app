@@ -1,29 +1,39 @@
 import getApiConfig from '../apiConfig';
 import * as constant from '../constants.js';
-import * as homeActions from '../actions/homeActions';
+import * as userActions from '../actions/userActions';
+import * as messageActions from '../actions/messageActions';
 var io = require('socket.io-client');
 var config = getApiConfig();
 
-export var socket; 
+var socket = null;
 
-export function initSocketConn(token, userid, dispatch)
+export function initSocketConn(token, userid, store)
 {
+    if(socket !== null)
+      socket.close();
+
     socket = io(config.dev.base, {
         query: {
             Token: token,
             userid
         }
     });
-    registerListeners(socket, dispatch);
+    registerListeners(socket, store);
 }
 
-function registerListeners(socket, dispatch){
-    socket.on(constant.SOCKET_USER_CONNECTED, payload => dispatch(homeActions.onUserConnected(payload)));
-    socket.on(constant.SOCKET_MESSAGE_RECEIVED, payload => dispatch(homeActions.onMessageReceived(payload)));
-    socket.on(constant.SOCKET_MESSAGE_TYPING, payload => dispatch(homeActions.onMessageTyping(payload)));
-    socket.on(constant.SOCKET_MESSAGE_SENT, payload => dispatch(homeActions.onMessageSent(payload)));
-    socket.on(constant.SOCKET_MESSAGE_UNREAD, payload => dispatch(homeActions.onMessageUnread(payload)));
-    socket.on(constant.SOCKET_MESSAGE_READ, payload => dispatch(homeActions.onMessageRead(payload)));
+export function closeSocketConn()
+{
+  socket.close();
+}
+
+function registerListeners(socket, store)
+{
+    socket.on(constant.SOCKET_USER_CONNECTED, payload => store.dispatch(userActions.onUserConnected(payload)));
+    socket.on(constant.SOCKET_MESSAGE_RECEIVED, payload => store.dispatch(messageActions.onMessageReceived(payload)));
+    socket.on(constant.SOCKET_MESSAGE_TYPING, payload => store.ispatch(messageActions.onMessageTyping(payload)));
+    socket.on(constant.SOCKET_MESSAGE_SENT, payload => store.dispatch(messageActions.onMessageSent(payload)));
+    socket.on(constant.SOCKET_MESSAGE_UNREAD, payload => store.dispatch(messageActions.onMessageUnread(payload)));
+    socket.on(constant.SOCKET_MESSAGE_READ, payload => store.dispatch(messageActions.onMessageRead(payload)));
 }
 
 export function getSocketConn(){

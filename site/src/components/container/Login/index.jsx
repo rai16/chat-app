@@ -5,7 +5,7 @@ import './login.scss';
 import getApiConfig from '../../../apiConfig.js';
 import { auth } from '../../../auth';
 import { withRouter } from 'react-router';
-import * as socketUtils from '../../../utils/socketUtils';
+import * as socketActions from '../../../actions/socketActions';
 
 var classNames = require('classnames');
 
@@ -77,7 +77,7 @@ class Login extends Component {
         //fire action to set some global state that the user has logged in and use it to verify
         if(result.user.loggedIn){
           auth.authenticate(this.state.loginUsername, result.user.id, result.user.token);
-          socketUtils.initSocketConn(result.user.token, result.user.id, this.props.dispatch);
+          this.props.dispatch(socketActions.socketConnect(result.user.token, result.user.id));
           this.props.history.push('/home');
         }
 
@@ -88,7 +88,7 @@ class Login extends Component {
 
   onSignup(e){
     e.preventDefault();
-    fetch(this.config.dev.users + 'register', 
+    fetch(this.config.dev.users + 'register',
     {
       method: 'POST',
       body: JSON.stringify({username: this.state.username, password: this.state.password}),
@@ -113,10 +113,10 @@ class Login extends Component {
 
   checkSignup(username, usernames, password, confPassword){
 
-    if(username.length > 0 && 
-      password.length > 0 && 
+    if(username.length > 0 &&
+      password.length > 0 &&
       confPassword.length > 0 &&
-      !usernames.includes(username) && 
+      !usernames.includes(username) &&
       password === confPassword){
           this.setState({isSignupEnabled: true});
     }
@@ -194,7 +194,7 @@ class Login extends Component {
                     <input type='password' id='inputPassword' onFocus = {() => this.setState({loginError: ''})} onChange = {(e) => this.setState({loginPassword: e.target.value})} value = {this.state.loginPassword} className='form-control' placeholder='Password' required/>
                       <label htmlFor='inputPassword'>Password</label>
                   </div>
-                
+
                   {/* <div className='custom-control custom-checkbox mb-3'>
                     <input type='checkbox' className='custom-control-input' id='customCheck1'/>
                       <label className='custom-control-label' htmlFor='customCheck1'>Remember password</label>
@@ -224,7 +224,7 @@ class Login extends Component {
                           <input type='password' id='inputConfirmPassword' value = {this.state.confPassword} onChange = {this.handleConfPasswordChange} className='form-control' placeholder='Confirm Password' required/>
                             <label htmlFor='inputConfirmPassword'>Confirm Password</label>
                         </div>
-                        <button disabled = {!this.state.isSignupEnabled} className={classNames('btn btn-lg btn-primary btn-block text-uppercase')} 
+                        <button disabled = {!this.state.isSignupEnabled} className={classNames('btn btn-lg btn-primary btn-block text-uppercase')}
                                 type='submit'
                         >
                           Sign Up
@@ -242,7 +242,7 @@ class Login extends Component {
 }
 
 const mapStateToProps = (state) => {
-    
+
     return {
       title: state.login.title
     };

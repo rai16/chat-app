@@ -3,18 +3,19 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import Login from './components/container/Login/index.jsx';
 import Home from './components/container/Home/index.jsx';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
 import rootReducer from './reducers/rootReducer';
 import {auth} from './auth';
+import socketMiddleware from './middleware/socketMiddleware';
 
-const store = createStore(rootReducer);
+const store = createStore(rootReducer, applyMiddleware(socketMiddleware()));
 
 function PrivateRoute({ component: Component, ...rest }) {
-    
+
     return (
       <Route
         {...rest}
@@ -32,11 +33,11 @@ function PrivateRoute({ component: Component, ...rest }) {
         }
       />
     );
-  } 
-  
+  }
+
 
 class Main extends Component{
-    render(){ 
+    render(){
             return(
             <Provider store = {store}>
                 <Router>

@@ -1,4 +1,5 @@
-export function parseDate(tempDate){
+export function parseDate(tempDate)
+{
     var date = new Date(tempDate);
     var month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                 "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"][date.getMonth()];

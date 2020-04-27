@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import '../../home.scss'; 
+import '../../home.scss';
 import UserListWindow from '../../UserListWindow';
 import ChatWindow from '../../ChatWindow';
 import {auth} from '../../../auth';
 import getApiConfig from '../../../apiConfig.js';
-import * as homeActions from '../../../actions/homeActions';
+import * as userActions from '../../../actions/userActions';
+import * as messageActions from '../../../actions/messageActions';
 
 class Home extends Component {
-  
+
   constructor(props){
     super(props);
     this.config = getApiConfig();
@@ -30,10 +31,10 @@ class Home extends Component {
   componentDidMount(){
     this.props.requestUserList();
     this.props.requestAllMessages();
-    var options = { 
-      method: 'get', 
+    var options = {
+      method: 'get',
       headers: new Headers({
-        'Authorization': 'Token '+auth.token, 
+        'Authorization': 'Token '+auth.token,
         'Content-Type': 'application/x-www-form-urlencoded'
       })
   }
@@ -77,7 +78,7 @@ class Home extends Component {
          else{
            temp = mssgThread.get(user_id);
            temp.push(message);
-           mssgThread.set(user_id, temp); 
+           mssgThread.set(user_id, temp);
          }
       });
       this.setState({messageThread: mssgThread});
@@ -92,12 +93,12 @@ class Home extends Component {
       <div className='container-fluid'>
         <div className='messaging row'>
           <div className='inbox_msg'>
-                  {this.props.users && 
+                  {this.props.users &&
                   this.props.allMessages &&
-                  this.props.users.length > 0 && 
+                  this.props.users.length > 0 &&
                   <UserListWindow users = {this.state.users} onSelectedUserChange = {this.changeSelectedUser}/>
                   }
-                  {this.state.selectedUser && 
+                  {this.state.selectedUser &&
                   <ChatWindow user = {this.state.selectedUser} messageThread = {this.state.messageThread}/>
                   }
                   {!this.state.selectedUser && <div className='mesgs'>
@@ -126,12 +127,12 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    requestUserList: () => dispatch(homeActions.requestUserList()),
-    setUserList: (users) => dispatch(homeActions.setUserList(users)),
-    errorUserList: (error) => dispatch(homeActions.errorUserList(error)),
-    requestAllMessages: () => dispatch(homeActions.requestAllMessages()),
-    setAllMessages: (allMessages) => dispatch(homeActions.setAllMessages(allMessages)),
-    errorAllMessages: (error) => dispatch(homeActions.errorAllMessages(error))
+    requestUserList: () => dispatch(userActions.requestUserList()),
+    setUserList: (users) => dispatch(userActions.setUserList(users)),
+    errorUserList: (error) => dispatch(userActions.errorUserList(error)),
+    requestAllMessages: () => dispatch(messageActions.requestAllMessages()),
+    setAllMessages: (allMessages) => dispatch(messageActions.setAllMessages(allMessages)),
+    errorAllMessages: (error) => dispatch(messageActions.errorAllMessages(error))
   }
 
 }
