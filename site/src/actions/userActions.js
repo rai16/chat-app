@@ -19,9 +19,17 @@ export function errorUserList(error){
 }
 
 export function onUserConnected(payload){
-    console.log(payload);
+    var userid = payload.userid;
     return{
         type: 'USER_CONNECTED',
-        payload
+        userid
+    }
+}
+
+export function onUserDisconnected(payload){
+    var userid = payload.userid;
+    return{
+        type: 'USER_DISCONNECTED',
+        userid
     }
 }

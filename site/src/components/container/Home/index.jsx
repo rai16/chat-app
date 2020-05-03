@@ -55,6 +55,8 @@ class Home extends Component {
     });
   }
 
+//get all users and their messages, pick the latest message and add it to user metadata.
+//This will be used to display the lasst message in User details
   defineUserLastMessage(){
     var mssgThread = this.state.messageThread;
     var users = this.state.users;
@@ -66,6 +68,7 @@ class Home extends Component {
     this.forceUpdate();
   }
 
+//Create a message map from list of all messages
   initMessageThread(users, messages){
       var mssgThread = new Map();
       var temp;
@@ -84,6 +87,7 @@ class Home extends Component {
       this.setState({messageThread: mssgThread});
   }
 
+//when someone clicks at a new user
   changeSelectedUser(user){
     this.setState({selectedUser: user});
   }

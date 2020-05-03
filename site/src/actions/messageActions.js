@@ -18,38 +18,50 @@ export function errorAllMessages(error){
     }
 }
 
-
 export function onMessageReceived(payload){
+    var message = payload.message;
     return{
         type: 'MESSAGE_RECEIVED',
-        payload
+        message
     }
 }
 
 export function onMessageTyping(payload){
+    var user = payload.user;
     return{
         type: 'MESSAGE_TYPING',
-        payload
+        user
+    }
+}
+
+export function onMessageStopTyping(payload){
+    var user = payload.user;
+    return{
+      type: 'MESSAGE_STOP_TYPING',
+      user
     }
 }
 
 export function onMessageSent(payload){
+   var message = payload.message;
     return{
-        type: 'MESSAGE_',
-        payload
+        type: 'MESSAGE_SENT',
+        message
     }
 }
 
 export function onMessageUnread(payload){
+    var messageId = payload.messageId;
     return{
         type: 'MESSAGE_UNREAD',
-        payload
+        messageId
     }
 }
 
 export function onMessageRead(payload){
+    var userId = payload.userId;
     return{
         type: 'MESSAGE_READ',
-        payload
+        userId
     }
 }

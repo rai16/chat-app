@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import '../home.scss';
 import { auth } from '../../auth';
 import getApiConfig from '../../apiConfig';
+import * as socketUtils from '../../utils/socketUtils';
 
 class ChatTypeBar extends Component{
     constructor(props){
@@ -22,34 +23,25 @@ class ChatTypeBar extends Component{
         e.preventDefault();
         var mssg = this.state.message.trim();
         this.setState({message: ''});
-        fetch(this.config.dev.messages + 'send', 
-        {
-            method: 'POST',
-            body: JSON.stringify({user_from: auth.userid, user_to: this.props.user._id, content: mssg, time: Date.now().toString()}),
-            headers: {"Content-Type": "application/json"}
-        })
-        .then(res => res.json())
-        .then(result => {
-            if(result.mssgSent)
-                console.log('message sent!!!');
-        })
+        var payload = {user_from: auth.userid, user_to: this.props.user._id, content: mssg, time: Date.now().toString()};
+        socketUtils.sendMessage(payload);
     }
-    
+
     render(){
         return (
             <div className='type_msg'>
                 <div className='input_msg_write'>
                     <form onSubmit = {this.sendMessage}>
-                        <textarea 
+                        <textarea
                             autoFocus
-                            type='text' 
-                            className='write_msg' 
-                            placeholder='Type a message' 
-                            onChange = {(e) => this.setState({message: e.target.value})} 
-                            value = {this.state.message} 
+                            type='text'
+                            className='write_msg'
+                            placeholder='Type a message'
+                            onChange = {(e) => this.setState({message: e.target.value})}
+                            value = {this.state.message}
                         />
-                        <button 
-                            className='msg_send_btn' 
+                        <button
+                            className='msg_send_btn'
                             type='submit'
                         >
                             <i className='fa fa-paper-plane-o' aria-hidden='true'>
